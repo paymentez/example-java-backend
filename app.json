@@ -1,6 +1,6 @@
 {
   "name": "Example Paymentez Backend",
-  "description": "For testing the Paymentez example mobile apps at github.com/paymentez/paymentez-android-example and github.com/paymentez/paymentez-ios-example",
+  "description": "For testing the Paymentez example mobile apps at https://github.com/paymentez",
   "repository": "https://github.com/paymentez/example-java-backend",
   "keywords": [
     "ios",
