@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @RestController
 @SpringBootApplication
@@ -54,6 +55,7 @@ public class Main {
 
     /**
      * This endpoint receives an uid and gives you all their cards assigned to that user.
+     * Your own logic shouldn't Call Paymentez on every request, instead, you should cache the cards on your own servers.
      *
      * @param uid Customer identifier. This is the identifier you use inside your application; you will receive it in notifications.
      *
@@ -67,17 +69,21 @@ public class Main {
         return jsonResponse;
     }
 
-
     /**
      * This endpoint is used by Android/ios example app to create a charge.
      *
      * @param uid Customer identifier. This is the identifier you use inside your application; you will receive it in notifications.
+     * @param session_id  string used for fraud purposes.
+     * @param token Card identifier. This token is unique among all cards.
+     * @param amount Amount to debit.
+     * @param dev_reference Merchant order reference. You will identify this purchase using this reference.
+     * @param description Clear descriptions help Customers to better understand what they’re buying.
      *
-     * @return a json with all the customer cards
+     * @return a json with the response
      */
     @RequestMapping(value = "/create-charge", method = RequestMethod.POST, produces = "application/json")
     String createCharge(@RequestParam(value = "uid") String uid,
-                        @RequestParam(value = "session_id") String session_id,
+                        @RequestParam(value = "session_id", required = false) String session_id,
                         @RequestParam(value = "token") String token,
                         @RequestParam(value = "amount") double amount,
                         @RequestParam(value = "dev_reference") String dev_reference,
@@ -88,6 +94,25 @@ public class Main {
         String jsonPaymentezDebit = Paymentez.paymentezDebitJson(customer, session_id, token, amount, dev_reference, description);
 
         String jsonResponse = Paymentez.doPostRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/transaction/debit", jsonPaymentezDebit);
+
+        return jsonResponse;
+    }
+
+    /**
+     * This endpoint is used by Android/ios example app to delete a card.
+     *
+     * @param uid Customer identifier. This is the identifier you use inside your application; you will receive it in notifications.
+     * @param token Card identifier. This token is unique among all cards.
+     *
+     * @return a json with the response
+     */
+    @RequestMapping(value = "/delete-card", method = RequestMethod.POST, produces = "application/json")
+    String deleteCard(@RequestParam(value = "uid") String uid,
+                        @RequestParam(value = "token") String token) {
+
+        String jsonPaymentezDelete = Paymentez.paymentezDeleteJson(uid, token);
+
+        String jsonResponse = Paymentez.doPostRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/transaction/delete", jsonPaymentezDelete);
 
         return jsonResponse;
     }

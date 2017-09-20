@@ -6,6 +6,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Optional;
 
 /**
  * Created by mmucito on 18/09/17.
@@ -37,14 +38,18 @@ public class Paymentez {
     }
 
     public static String paymentezDebitJson(Customer customer, String session_id, String token, double amount, String dev_reference, String description) {
+        String session_id_row = "";
+        if(session_id != null && session_id != ""){
+            session_id_row = "\"session_id\": \"" + session_id + "\",";
+        }
         return "{" +
-                    "\"session_id\": \"" + session_id + "\"," +
+                    session_id_row +
                     "\"user\": {" +
                         "\"id\": \"" + customer.getId() + "\"," +
                         "\"email\": \"" + customer.getEmail() + "\"," +
                         "\"ip_address\": \"" + customer.getIpAddress() + "\"" +
                     "}," +
-                    "\"product\": {" +
+                    "\"order\": {" +
                         "\"code\": \"123\"," +
                         "\"amount\": " + amount + "," +
                         "\"description\": \"" + description + "\"," +
@@ -53,6 +58,18 @@ public class Paymentez {
                     "}," +
                     "\"card\": {" +
                         "\"token\": \"" + token + "\"" +
+                    "}" +
+                "}";
+    }
+
+
+    public static String paymentezDeleteJson(String uid, String token) {
+        return "{" +
+                    "\"card\": {" +
+                        "\"token\": \"" +token + "\"" +
+                    "}," +
+                    "\"user\": {" +
+                        "\"id\": \"" + uid + "\"" +
                     "}" +
                 "}";
     }
