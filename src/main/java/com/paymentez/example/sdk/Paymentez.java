@@ -1,8 +1,11 @@
 package com.paymentez.example.sdk;
 
+import com.paymentez.example.model.Customer;
+import okhttp3.*;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Base64;
@@ -14,6 +17,11 @@ import java.util.Map;
 public class Paymentez {
     public static String PAYMENTEZ_DEV_URL = "https://ccapi-stg.paymentez.com";
     public static String PAYMENTEZ_PROD_URL = "https://ccapi.paymentez.com";
+
+
+    public static OkHttpClient client = new OkHttpClient();
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
 
 
     private static String getUniqToken(String auth_timestamp, String app_secret_key) {
@@ -34,20 +42,61 @@ public class Paymentez {
     }
 
 
-    public static String getParamsString(Map<String, String> params)
-            throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder();
+    public static String paymentezDebitJson(Customer customer, String session_id, String token, double amount, String dev_reference, String description) {
+        return "{" +
+                    "\"session_id\": \"" + session_id + "\"," +
+                    "\"user\": {" +
+                        "\"id\": \"" + customer.getId() + "\"," +
+                        "\"email\": \"" + customer.getEmail() + "\"," +
+                        "\"ip_address\": \"" + customer.getIpAddress() + "\"" +
+                    "}," +
+                    "\"product\": {" +
+                        "\"code\": \"123\"," +
+                        "\"amount\": " + amount + "," +
+                        "\"description\": \"" + description + "\"," +
+                        "\"dev_reference\": \"" + dev_reference + "\"," +
+                        "\"vat\": 0.00" +
+                    "}," +
+                    "\"card\": {" +
+                        "\"token\": \"" + token + "\"" +
+                    "}" +
+                "}";
+    }
 
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-            result.append("&");
+
+    public static String doPostRequest(String url, String json){
+        String jsonResponse = "{}";
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .header("Auth-Token", Paymentez.getAuthToken(System.getenv("APP_CODE"), System.getenv("APP_SECRET_KEY")))
+                .url(url)
+                .post(body)
+                .build();
+        Response response = null;
+        try {
+            response = client.newCall(request).execute();
+            jsonResponse = response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return jsonResponse;
+    }
 
-        String resultString = result.toString();
-        return resultString.length() > 0
-                ? resultString.substring(0, resultString.length() - 1)
-                : resultString;
+
+    public static String doGetRequest(String url){
+        String jsonResponse = "{}";
+        Request request = new Request.Builder()
+                .header("Auth-Token", Paymentez.getAuthToken(System.getenv("APP_CODE"), System.getenv("APP_SECRET_KEY")))
+                .url(url)
+                .build();
+
+        Response response = null;
+        try {
+            response = client.newCall(request).execute();
+            jsonResponse = response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return jsonResponse;
     }
 }
