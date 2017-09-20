@@ -40,4 +40,5 @@ public class Customer {
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
     }
+    
 }

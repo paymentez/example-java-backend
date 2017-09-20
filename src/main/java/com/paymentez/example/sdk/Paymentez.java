@@ -4,25 +4,20 @@ import com.paymentez.example.model.Customer;
 import okhttp3.*;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
-
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Base64;
-import java.util.Map;
 
 /**
  * Created by mmucito on 18/09/17.
  */
 public class Paymentez {
+
     public static String PAYMENTEZ_DEV_URL = "https://ccapi-stg.paymentez.com";
     public static String PAYMENTEZ_PROD_URL = "https://ccapi.paymentez.com";
-
 
     public static OkHttpClient client = new OkHttpClient();
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
-
 
     private static String getUniqToken(String auth_timestamp, String app_secret_key) {
         String uniq_token_string = app_secret_key + auth_timestamp;
@@ -40,7 +35,6 @@ public class Paymentez {
         String sha256hex = new String(Hex.encodeHex(DigestUtils.sha256(message)));
         return sha256hex;
     }
-
 
     public static String paymentezDebitJson(Customer customer, String session_id, String token, double amount, String dev_reference, String description) {
         return "{" +
@@ -63,7 +57,6 @@ public class Paymentez {
                 "}";
     }
 
-
     public static String doPostRequest(String url, String json){
         String jsonResponse = "{}";
         RequestBody body = RequestBody.create(JSON, json);
@@ -81,7 +74,6 @@ public class Paymentez {
         }
         return jsonResponse;
     }
-
 
     public static String doGetRequest(String url){
         String jsonResponse = "{}";

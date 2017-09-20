@@ -18,16 +18,13 @@ package com.paymentez.example;
 
 import com.paymentez.example.model.Customer;
 import com.paymentez.example.sdk.Paymentez;
-import okhttp3.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 @RestController
 @SpringBootApplication
