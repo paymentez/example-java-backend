@@ -6,6 +6,8 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -15,6 +17,8 @@ public class Paymentez {
 
     public static String PAYMENTEZ_DEV_URL = "https://ccapi-stg.paymentez.com";
     public static String PAYMENTEZ_PROD_URL = "https://ccapi.paymentez.com";
+    public static final String RESPONSE_HTTP_CODE = "RESPONSE_HTTP_CODE";
+    public static final String RESPONSE_JSON = "RESPONSE_JSON";
 
     public static OkHttpClient client = new OkHttpClient();
     public static final MediaType JSON
@@ -74,7 +78,7 @@ public class Paymentez {
                 "}";
     }
 
-    public static String doPostRequest(String url, String json){
+    public static Map<String, String> doPostRequest(String url, String json){
         String jsonResponse = "{}";
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
@@ -82,17 +86,22 @@ public class Paymentez {
                 .url(url)
                 .post(body)
                 .build();
+
         Response response = null;
+        Map<String, String> mapResult = new HashMap<>(2);
+
         try {
             response = client.newCall(request).execute();
             jsonResponse = response.body().string();
+            mapResult.put(RESPONSE_HTTP_CODE, ""+response.code());
+            mapResult.put(RESPONSE_JSON, jsonResponse);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return jsonResponse;
+        return mapResult;
     }
 
-    public static String doGetRequest(String url){
+    public static Map<String, String> doGetRequest(String url){
         String jsonResponse = "{}";
         Request request = new Request.Builder()
                 .header("Auth-Token", Paymentez.getAuthToken(System.getenv("APP_CODE"), System.getenv("APP_SECRET_KEY")))
@@ -100,12 +109,17 @@ public class Paymentez {
                 .build();
 
         Response response = null;
+        Map<String, String> mapResult = new HashMap<>(2);
+
         try {
             response = client.newCall(request).execute();
             jsonResponse = response.body().string();
+            mapResult.put(RESPONSE_HTTP_CODE, ""+response.code());
+            mapResult.put(RESPONSE_JSON, jsonResponse);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return jsonResponse;
+
+        return mapResult;
     }
 }

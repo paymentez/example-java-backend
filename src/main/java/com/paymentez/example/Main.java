@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -62,11 +64,11 @@ public class Main {
      * @return a json with all the customer cards
      */
     @RequestMapping(value = "/get-cards", method = RequestMethod.GET, produces = "application/json")
-    String getCards(@RequestParam(value = "uid") String uid) {
+    String getCards(@RequestParam(value = "uid") String uid, HttpServletResponse response) {
 
-        String jsonResponse = Paymentez.doGetRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/transaction/list?uid="+uid);
-
-        return jsonResponse;
+        Map<String, String> mapResponse = Paymentez.doGetRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/transaction/list?uid="+uid);
+        response.setStatus(Integer.parseInt(mapResponse.get(Paymentez.RESPONSE_HTTP_CODE)));
+        return mapResponse.get(Paymentez.RESPONSE_JSON);
     }
 
     /**
@@ -88,14 +90,14 @@ public class Main {
                         @RequestParam(value = "amount") double amount,
                         @RequestParam(value = "dev_reference") String dev_reference,
                         @RequestParam(value = "description") String description,
-                        HttpServletRequest request) {
+                        HttpServletRequest request, HttpServletResponse response) {
         Customer customer = getAuthenticatedCustomer(uid, request);
 
         String jsonPaymentezDebit = Paymentez.paymentezDebitJson(customer, session_id, token, amount, dev_reference, description);
 
-        String jsonResponse = Paymentez.doPostRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/transaction/debit", jsonPaymentezDebit);
-
-        return jsonResponse;
+        Map<String, String> mapResponse = Paymentez.doPostRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/transaction/debit", jsonPaymentezDebit);
+        response.setStatus(Integer.parseInt(mapResponse.get(Paymentez.RESPONSE_HTTP_CODE)));
+        return mapResponse.get(Paymentez.RESPONSE_JSON);
     }
 
     /**
@@ -108,13 +110,13 @@ public class Main {
      */
     @RequestMapping(value = "/delete-card", method = RequestMethod.POST, produces = "application/json")
     String deleteCard(@RequestParam(value = "uid") String uid,
-                        @RequestParam(value = "token") String token) {
+                        @RequestParam(value = "token") String token, HttpServletResponse response) {
 
         String jsonPaymentezDelete = Paymentez.paymentezDeleteJson(uid, token);
 
-        String jsonResponse = Paymentez.doPostRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/transaction/delete", jsonPaymentezDelete);
-
-        return jsonResponse;
+        Map<String, String> mapResponse = Paymentez.doPostRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/transaction/delete", jsonPaymentezDelete);
+        response.setStatus(Integer.parseInt(mapResponse.get(Paymentez.RESPONSE_HTTP_CODE)));
+        return mapResponse.get(Paymentez.RESPONSE_JSON);
     }
 
 }
