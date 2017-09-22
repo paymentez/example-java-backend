@@ -4,11 +4,11 @@ import com.paymentez.example.model.Customer;
 import okhttp3.*;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
+
 import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Created by mmucito on 18/09/17.
@@ -75,6 +75,20 @@ public class Paymentez {
                     "\"user\": {" +
                         "\"id\": \"" + uid + "\"" +
                     "}" +
+                "}";
+    }
+
+    public static String paymentezVerifyJson(String uid, String transaction_id, String type, String value) {
+        return "{" +
+                    "\"user\": {" +
+                        "\"id\": \"" + uid + "\"" +
+                    "}," +
+                    "\"transaction\": {" +
+                        "\"id\": \"" + transaction_id + "\"" +
+                    "}," +
+                    "\"type\": \"" + type + "\"," +
+                    "\"value\": \"" + value + "\"" +
+                    "" +
                 "}";
     }
 

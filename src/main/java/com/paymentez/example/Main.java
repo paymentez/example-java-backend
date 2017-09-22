@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @SpringBootApplication
@@ -115,6 +115,28 @@ public class Main {
         String jsonPaymentezDelete = Paymentez.paymentezDeleteJson(uid, token);
 
         Map<String, String> mapResponse = Paymentez.doPostRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/transaction/delete", jsonPaymentezDelete);
+        response.setStatus(Integer.parseInt(mapResponse.get(Paymentez.RESPONSE_HTTP_CODE)));
+        return mapResponse.get(Paymentez.RESPONSE_JSON);
+    }
+
+    /**
+     * This endpoint is used by Android/ios example app to verify a card or transaction.
+     *
+     * @param uid Customer identifier. This is the identifier you use inside your application; you will receive it in notifications.
+     * @param transaction_id Transaction identifier. This is code is unique among all transactions.
+     * @param type It identifies if the value is authorization code or amount (BY_AMOUNT / BY_AUTH_CODE)
+     * @param value The authorization code provided by the financial entity to the buyer or the transaction amount.
+     *
+     * @return a json with the response
+     */
+    @RequestMapping(value = "/verify-transaction", method = RequestMethod.POST, produces = "application/json")
+    String verifyTransaction(@RequestParam(value = "uid") String uid,
+                             @RequestParam(value = "transaction_id") String transaction_id, @RequestParam(value = "type") String type,
+                      @RequestParam(value = "value") String value, HttpServletResponse response) {
+
+        String jsonPaymentezVerify = Paymentez.paymentezVerifyJson(uid, transaction_id, type, value);
+
+        Map<String, String> mapResponse = Paymentez.doPostRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/transaction/verify", jsonPaymentezVerify);
         response.setStatus(Integer.parseInt(mapResponse.get(Paymentez.RESPONSE_HTTP_CODE)));
         return mapResponse.get(Paymentez.RESPONSE_JSON);
     }
