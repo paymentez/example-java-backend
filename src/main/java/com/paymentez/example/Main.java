@@ -66,7 +66,7 @@ public class Main {
     @RequestMapping(value = "/get-cards", method = RequestMethod.GET, produces = "application/json")
     String getCards(@RequestParam(value = "uid") String uid, HttpServletResponse response) {
 
-        Map<String, String> mapResponse = Paymentez.doGetRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/transaction/list?uid="+uid);
+        Map<String, String> mapResponse = Paymentez.doGetRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/card/list?uid="+uid);
         response.setStatus(Integer.parseInt(mapResponse.get(Paymentez.RESPONSE_HTTP_CODE)));
         return mapResponse.get(Paymentez.RESPONSE_JSON);
     }
@@ -114,7 +114,7 @@ public class Main {
 
         String jsonPaymentezDelete = Paymentez.paymentezDeleteJson(uid, token);
 
-        Map<String, String> mapResponse = Paymentez.doPostRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/transaction/delete", jsonPaymentezDelete);
+        Map<String, String> mapResponse = Paymentez.doPostRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/card/delete", jsonPaymentezDelete);
         response.setStatus(Integer.parseInt(mapResponse.get(Paymentez.RESPONSE_HTTP_CODE)));
         return mapResponse.get(Paymentez.RESPONSE_JSON);
     }
