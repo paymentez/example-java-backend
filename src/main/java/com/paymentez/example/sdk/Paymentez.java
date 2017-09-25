@@ -96,7 +96,7 @@ public class Paymentez {
         String jsonResponse = "{}";
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
-                .header("Auth-Token", Paymentez.getAuthToken(System.getenv("APP_CODE"), System.getenv("APP_SECRET_KEY")))
+                .header("Auth-Token", Paymentez.getAuthToken(System.getenv("PAYMENTEZ_APP_SERVER_CODE"), System.getenv("PAYMENTEZ_APP_SERVER_KEY")))
                 .url(url)
                 .post(body)
                 .build();

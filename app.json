@@ -9,11 +9,11 @@
     "paymentez"
   ],
   "env": {
-    "APP_CODE": {
+    "PAYMENTEZ_APP_SERVER_CODE": {
       "description": "Ask the Paymentez team for it.",
       "required": true
     },
-    "APP_SECRET_KEY": {
+    "PAYMENTEZ_APP_SERVER_KEY": {
       "description": "Ask the Paymentez team for it.",
       "required": true
     }
