@@ -135,7 +135,7 @@ public class Main {
      *
      * Every time a transaction gets approved or cancelled you will get an HTTP POST request from Paymentez to your callback_url (configured using the admin cpanel).
      *
-     * @param httpEntity A json with fields of the transaction, for more detail please look at the doc: https://paymentez.github.io/api-doc
+     * @param httpEntity A json with fields of the transaction, for more detail please look at: https://paymentez.github.io/api-doc
      *
      * @return For every transaction you must return an HTTP status 200, this status is only used to know that you received correctly the call.
      *
