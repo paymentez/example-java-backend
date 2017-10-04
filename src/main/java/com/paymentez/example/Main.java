@@ -8,6 +8,7 @@ import com.paymentez.example.model.Customer;
 import com.paymentez.example.sdk.Paymentez;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -127,6 +128,26 @@ public class Main {
         Map<String, String> mapResponse = Paymentez.doPostRequest(Paymentez.PAYMENTEZ_DEV_URL + "/v2/transaction/verify", jsonPaymentezVerify);
         response.setStatus(Integer.parseInt(mapResponse.get(Paymentez.RESPONSE_HTTP_CODE)));
         return mapResponse.get(Paymentez.RESPONSE_JSON);
+    }
+
+    /**
+     * This endpoint is used for:
+     *
+     * Every time a transaction gets approved or cancelled you will get an HTTP POST request from Paymentez to your callback_url (configured using the admin cpanel).
+     *
+     * @param httpEntity A json with fields of the transaction, for more detail please look at the doc: https://paymentez.github.io/api-doc
+     *
+     * @return For every transaction you must return an HTTP status 200, this status is only used to know that you received correctly the call.
+     *
+     */
+    @RequestMapping(value = "/web-hook-callback", method = RequestMethod.POST, produces = "application/json")
+    String WebHookCallback(HttpEntity<String> httpEntity, HttpServletResponse response) {
+
+        String json = httpEntity.getBody();
+        System.out.println(json);
+
+        response.setStatus(200);
+        return "{}";
     }
 
 }
