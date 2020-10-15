@@ -30,7 +30,8 @@ public class Paymentez {
     }
 
     public static String getAuthToken(String app_code, String app_secret_key) {
-        String auth_timestamp = "" + (System.currentTimeMillis());
+        Long tsLong = System.currentTimeMillis()/1000;
+        String auth_timestamp = tsLong.toString();
         String string_auth_token = app_code + ";" + auth_timestamp + ";" + getUniqToken(auth_timestamp, app_secret_key);
         String auth_token = new String(Base64.getEncoder().encode(string_auth_token.getBytes()));
         return auth_token;
